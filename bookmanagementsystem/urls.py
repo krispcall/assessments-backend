@@ -9,8 +9,6 @@ from django.conf.urls.static import static
 
 
 
-
-
 admin.site.site_header = "Book Management System"
 admin.site.site_title = "Book Management System Admin Portal"
 admin.site.index_title = "Welcome to Book Management System Admin Portal"
@@ -34,8 +32,8 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', acc_views.landing_page, name="homepage"),
-
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('', include('accounts.apis.v1.urls')),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
