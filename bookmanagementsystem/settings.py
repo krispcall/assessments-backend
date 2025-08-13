@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'books.apps.BooksConfig',
     # Third party applications
+    'rest_framework',
+    'drf_yasg',
 ]
 
 
