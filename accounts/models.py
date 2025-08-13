@@ -89,3 +89,30 @@ class User(AbstractBaseUser, PermissionsMixin):
         db_table='user'
         verbose_name = 'User'
         verbose_name_plural = 'Users'
+    
+
+class Subscription(models.Model):
+    """
+    Custom User subscription model for package subscription.
+    Base classes:
+        - Models
+    Returns:
+        subscription types for the user
+    """
+    SUBSCRIPTION_TYPE = (
+        ("FREE","FREE"),
+        ("BASIC","BASIC"),
+        ("PRO","PRO"),
+    )
+    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')
+    subscription_type = models.CharField(choices=SUBSCRIPTION_TYPE, max_length=55, default="FREE")
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'subscription'
+        verbose_name = 'subscription'
+        verbose_name_plural = 'subscription'
+
+    def __str__(self):
+        return self.subscription_type

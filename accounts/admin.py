@@ -1,5 +1,5 @@
 from django.contrib import admin
-from accounts.models import User
+from accounts.models import User, Subscription
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
@@ -39,3 +39,35 @@ class UserADmin(UserAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    """
+    This class show the subscription data into the admin panel
+    Args:
+        - BaseClass: ModelAdmin
+    Returns:
+        - None
+    """
+    list_display=['user','subscription_type','created_date','updated_date']
+    list_display_links=['user','subscription_type','created_date','updated_date']
+    list_filter = ['subscription_type',]
+    search_fields = ['subscription_type',]
+    readonly_fields = ('created_date', 'updated_date')
+
+    fieldsets = (
+        (_('User Details'), {'fields': ( 'user',)}),
+        (_('Subscription Package'), {'fields': ( 'subscription_type',)}),
+        (_('Important dates'), {'fields': ('created_date', 'updated_date')}),
+    )
+    
+    # we can enable or disbale this as per our need
+    def has_delete_permission(self, request, obj=None):
+        return True
+    
+    def has_add_permission(self, request):
+        return 
+    
+    def has_change_permission(self, request, obj=None):
+        return True
