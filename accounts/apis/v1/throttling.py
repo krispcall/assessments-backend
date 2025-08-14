@@ -1,9 +1,7 @@
 from rest_framework.throttling import BaseThrottle
 from rest_framework.exceptions import ValidationError
 from django.utils import timezone
-from datetime import timedelta
 from django.core.cache import cache
-
 
 PLAN_LIMITS = {
     "FREE": 100,
@@ -11,10 +9,15 @@ PLAN_LIMITS = {
     "PRO": None,
 }
 
+BURST_LIMIT = 15  
+BURST_WINDOW_SEC = 60  
+
+
 class CustomRateThrottle(BaseThrottle):
     """
     Custom throttle based on subscription type.
     Tracks requests per user per day.
+    Also temporary blocks if too many requests in short time.
     """
     def allow_request(self, request, view):
         user = request.user
@@ -22,8 +25,15 @@ class CustomRateThrottle(BaseThrottle):
             raise ValidationError("Authentication required.")
         if not hasattr(user, "subscription"):
             raise ValidationError("please subscribe !!!")
-        subscription_type = user.subscriptionnn.subscription_type
+        subscription_type = user.subscription.subscription_type
         limit = PLAN_LIMITS.get(subscription_type)
+        burst_key = f"burst_{user.id}"
+        burst_count = cache.get(burst_key, 0)
+        if burst_count >= BURST_LIMIT:
+            raise ValidationError(
+                "Too many requests in a short time. Try again later."
+            )
+        cache.set(burst_key, burst_count + 1, timeout=BURST_WINDOW_SEC)
         if limit is None:
             return True
         today_key = f"throttle_{user.id}_{timezone.now().date()}"
