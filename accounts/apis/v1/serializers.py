@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from accounts.models import Subscription
+from accounts.models import Subscription 
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):

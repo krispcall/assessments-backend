@@ -3,3 +3,4 @@ Pipfile
 migrations
 __pycache__
 .env
+media

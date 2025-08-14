@@ -25,7 +25,7 @@ logging.basicConfig(
     format='%(levelname)s -- %(logged_time)s -- %(short_path)s:%(lineno)d -- User: %(username)s -- Message: %(message)s',
     level=logging.INFO,
     handlers=[
-        logging.FileHandler('reportcardsystem.log'),
+        logging.FileHandler('bookmanagementsystem.log'),
         logging.StreamHandler()
     ]
 )

@@ -104,7 +104,7 @@ class Subscription(models.Model):
         ("BASIC","BASIC"),
         ("PRO","PRO"),
     )
-    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')
+    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='subscription')
     subscription_type = models.CharField(choices=SUBSCRIPTION_TYPE, max_length=55, default="FREE")
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)

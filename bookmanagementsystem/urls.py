@@ -34,6 +34,7 @@ urlpatterns = [
     path('', acc_views.landing_page, name="homepage"),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('', include('accounts.apis.v1.urls')),
+    path('', include('books.apis.v1.urls')),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
