@@ -1,6 +1,8 @@
 from django.db import models
 from django.db.models.query import QuerySet
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.utils import timezone
+
 
 
 class CustomAccountManager(BaseUserManager):
@@ -116,3 +118,51 @@ class Subscription(models.Model):
 
     def __str__(self):
         return self.subscription_type
+
+
+
+class ThrottleLog(models.Model):
+    user_id = models.IntegerField(null=True, blank=True)  # store user ID if authenticated
+    api_key = models.CharField(max_length=255, null=True, blank=True)
+    ip_address = models.GenericIPAddressField()
+    reason = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.timestamp} | {self.ip_address} | {self.reason}"
+    
+    class Meta:
+        db_table = 'throttlelog'
+        verbose_name = 'ThrottleLog'
+        verbose_name_plural = 'ThrottleLog'
+
+class BlockedIP(models.Model):
+    ip_address = models.GenericIPAddressField(unique=True)
+    reason = models.CharField(max_length=255)
+    blocked_at = models.DateTimeField(default=timezone.now)
+    is_active = models.BooleanField(default=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.ip_address} - {'Active' if self.is_active else 'Inactive'}"
+    
+    class Meta:
+        db_table = "blockip"
+        verbose_name =  "BlockedIP"
+        verbose_name_plural =  "BlockedIP"
+
+    @property
+    def is_temporary(self):
+        """Check if this block is temporary and still active"""
+        if self.expires_at:
+            return timezone.now() < self.expires_at
+        return False
+
+    @property
+    def currently_blocked(self):
+        """Check if the IP is currently blocked (temporary or permanent)"""
+        if not self.is_active:
+            return False
+        if self.expires_at and timezone.now() > self.expires_at:
+            return False
+        return True

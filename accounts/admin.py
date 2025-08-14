@@ -1,5 +1,5 @@
 from django.contrib import admin
-from accounts.models import User, Subscription
+from accounts.models import User, Subscription, BlockedIP, ThrottleLog
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
@@ -71,3 +71,23 @@ class SubscriptionAdmin(admin.ModelAdmin):
     
     def has_change_permission(self, request, obj=None):
         return True
+    
+
+@admin.register(BlockedIP)
+class BlockedIPAdmin(admin.ModelAdmin):
+    list_display = ("ip_address", "reason", "blocked_at", "expires_at", "is_active")
+    list_filter = ("is_active", "blocked_at")
+    search_fields = ("ip_address",)
+    actions = ["unblock_ips"]
+
+    def unblock_ips(self, request, queryset):
+        queryset.update(is_active=False)
+        self.message_user(request, "Selected IPs have been unblocked.")
+    unblock_ips.short_description = "Unblock selected IPs"
+
+
+@admin.register(ThrottleLog)
+class ThrottleLogAdmin(admin.ModelAdmin):
+    list_display = ("timestamp", "user_id", "api_key", "ip_address", "reason")
+    list_filter = ("timestamp", "ip_address")
+    search_fields = ("user_id", "api_key", "ip_address", "reason")
