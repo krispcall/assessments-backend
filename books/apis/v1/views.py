@@ -116,15 +116,11 @@ class UploadViewSet(viewsets.ViewSet):
         serializer = UploadSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
         filename = serializer.validated_data['filename']
         total_size = serializer.validated_data['total_size']
         content_type = serializer.validated_data.get('content_type', 'text/csv')
-
         chunk_size = 50 * 1024 * 1024
         total_chunks = math.floor((total_size + chunk_size - 1) // chunk_size) + 1
-        print("********",total_chunks, "********************************************")
-
         upload = Upload.objects.create(
             user=self.request.user,
             filename=filename,
@@ -210,19 +206,15 @@ class UploadViewSet(viewsets.ViewSet):
             upload = self.get_queryset().get(upload_id=pk)
         except ObjectDoesNotExist:
             return Response({"detail": "Upload not found."}, status=status.HTTP_404_NOT_FOUND)
-
         total_chunks = request.data.get('total_chunks')
         if not total_chunks:
             return Response({"detail": "Missing total_chunks."}, status=status.HTTP_400_BAD_REQUEST)
-
         try:
             total_chunks = int(total_chunks)
         except (TypeError, ValueError):
             return Response({"detail": "Invalid total_chunks."}, status=status.HTTP_400_BAD_REQUEST)
-        print(upload.chunks_received, total_chunks, upload.total_chunks, '**********************************')
         if upload.chunks_received != total_chunks or upload.total_chunks != total_chunks:
             return Response({"detail": "Incomplete chunks."}, status=status.HTTP_400_BAD_REQUEST)
-
         file_path = assemble_file(upload)
         upload.status = 'uploaded'
         upload.save()
@@ -253,7 +245,6 @@ class UploadViewSet(viewsets.ViewSet):
             upload = self.get_queryset().get(upload_id=pk)
         except ObjectDoesNotExist:
             return Response({"detail": "Upload not found."}, status=status.HTTP_404_NOT_FOUND)
-        
         serializer = UploadStatusSerializer(upload)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -275,16 +266,13 @@ def process_file_task(upload_id, file_path):
     Process the uploaded CSV file to create Book instances without linking to Upload.
     """
     try:
-        # Mark upload status as processing (optional)
         upload = Upload.objects.get(upload_id=upload_id)
         upload.status = 'processing'
         upload.save()
-
         required_columns = ['title', 'content', 'author', 'publish_date']
         for chunk in pd.read_csv(file_path, chunksize=10000):
             if not all(col in chunk.columns for col in required_columns):
                 raise ValueError("CSV missing required columns: title, content, author, publish_date")
-
             books_to_create = []
             for _, row in chunk.iterrows():
                 books_to_create.append(Book(
@@ -293,20 +281,14 @@ def process_file_task(upload_id, file_path):
                     author=str(row['author']).strip()[:255],
                     publish_date=str(row['publish_date']).strip(),
                 ))
-
-            # Bulk create books without linking to upload
             Book.objects.bulk_create(books_to_create)
-
         upload.status = 'completed'
         upload.save()
-
-        # Cleanup temporary chunks
         for chunk in upload.chunks.all():
             chunk.chunk_file.delete()
             chunk.delete()
         if os.path.exists(file_path):
             os.remove(file_path)
-
     except Exception as e:
         upload.status = 'error'
         upload.error_message = str(e)
