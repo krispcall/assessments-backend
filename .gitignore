@@ -4,3 +4,5 @@ migrations
 __pycache__
 .env
 media
+staticfiles
+celerybeat-schedule

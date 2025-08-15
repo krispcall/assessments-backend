@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     # Third party applications
     'rest_framework',
     'drf_yasg',
+    'django_celery_results',
 ]
 
 
@@ -144,6 +145,15 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE =config('TIME_ZONE')
 USE_I18N = True
 USE_TZ = True
+
+
+CELERY_BROKER_URL = 'redis://web_redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_TASK_IGNORE_RESULT = False
+
 
 
 STATIC_URL = 'static/'
