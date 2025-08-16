@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% endblock title %}
+
+{% block css %}
+<style>
+.mainbox{
+    background-color: #43766C;
+    border-radius: 3vh;
+    margin-top: 4.5%;
+    padding-top: 5%;
+    padding-bottom: 5%;
+}
+.title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #bdd2cb;
+    text-align: center;
+    width: 60%;
+    margin-left: 20%;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+
+}
+.links {
+    color: white;
+    display: flex;
+    gap: 35px;
+}
+.links a {
+    color: #bdd2cb;
+    font: 30px;
+    padding: 15px;
+    border: 2px solid #81a096;
+    border-radius: 3vh;
+    background: linear-gradient(to left, #43766C, #81a096, #43766C);
+    text-decoration: none;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+
+}
+.links a:hover{
+    background: linear-gradient(to left, #81a096, #43766C, #81a096);
+}
+.desc {
+    text-align: center;
+    padding: 5% 5% 0% 5%;
+    color: #bdd2cb;
+    font-size: 18px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+
+}
+body {
+    background: #bdd2cb;
+}
+</style>
+{% endblock css %}
+
+{% block body %}
+<section>
+    <div class="container">
+        <div class="mainbox">
+            <h5 class="title">Books Management System</h5>
+            <p class="desc">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora aspernatur dolor ducimus hic excepturi perspiciatis perferendis deleniti, repudiandae iste obcaecati nemo odit placeat reiciendis sint libero harum natus voluptatem dolorum aliquid animi enim eius quo. Quisquam, in dolorem deserunt inventore doloribus consectetur quaerat animi laborum quidem veniam accusamus quam voluptatum! Distinctio suscipit praesentium officiis, quibusdam repudiandae itaque? Placeat earum ut dicta quibusdam vitae deserunt accusamus reprehenderit, unde facilis adipisci pariatur, tenetur voluptatum iste? Vel ea nobis, illum provident tempore quod aspernatur repellat, fuga eveniet et repellendus repudiandae quasi, eos saepe temporibus porro molestias? Nam in ipsa, error quod repudiandae quisquam tenetur quo a corporis cum, necessitatibus amet mollitia optio consequatur voluptates numquam perspiciatis dolorem atque sit magnam totam ducimus ratione id commodi? Nobis, quae? Repellendus necessitatibus laboriosam quibusdam iusto omnis minus culpa assumenda ea aliquam dicta impedit in eaque delectus repudiandae quae atque, corrupti id dolores voluptate molestias rem nisi? Exercitationem odit architecto tempora laboriosam quia ipsam consectetur error provident eveniet consequuntur, odio aliquid quidem repudiandae est. Et nam consequuntur consequatur quisquam iste expedita est! Vero itaque autem voluptates exercitationem quasi maiores dolore suscipit ex illo et sed beatae facilis provident facere, tempore perferendis. Voluptates, dolorum inventore? Itaque, odit repellendus.    
+            </p>
+            <div class="row justify-content-center mt-5 pt-5">
+                <div class="links">
+                    <a href="swagger" >Swagger Documentation</a> 
+                    <a href="admin">Django Admin Pannel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock body %}
+
+{% block script %}
+{% endblock script %}

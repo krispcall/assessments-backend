@@ -1,0 +1,67 @@
+version: '3.9'
+
+services:
+  web_redis:
+    container_name: web_redis
+    image: redis:7
+    ports:
+      - "6379:6379"
+    networks:
+      - web
+  webapp:
+    container_name: web_app
+    build: .
+    volumes:
+      - .:/code
+      - db_data:/code/dbdata
+    ports:
+      - "8000:8000"
+    environment:
+      - CELERY_BROKER_URL=redis://web_redis:6379/0
+      - CELERY_RESULT_BACKEND=django-db
+    depends_on:
+      - web_redis
+    entrypoint: ["/code/entrypoint.sh"]
+    networks:
+      - web
+
+  web_celery_worker:
+    container_name: web_celery_worker
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - web_redis
+    environment:
+      - CELERY_BROKER_URL=redis://web_redis:6379/0
+      - CELERY_RESULT_BACKEND=django-db
+    command: celery -A bookmanagementsystem.celery worker --loglevel=info
+    volumes:
+      - .:/code
+      - db_data:/code/dbdata
+    networks:
+      - web
+  web_celery_beat:
+    container_name: web_celery_beat
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - web_redis
+    environment:
+      - CELERY_BROKER_URL=redis://web_redis:6379/0
+      - CELERY_RESULT_BACKEND=django-db
+    command: celery -A bookmanagementsystem.celery beat --loglevel=info
+    volumes:
+      - .:/code
+      - db_data:/code/dbdata
+    networks:
+      - web
+
+
+networks:
+  web:
+    driver: bridge
+
+volumes:
+  db_data:
