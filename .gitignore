@@ -1,1 +1,12 @@
 myenv
+.env
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+
+# Database files
+*.sqlite3
+*.db
