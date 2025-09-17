@@ -1,0 +1,12 @@
+myenv
+pycache/
+*.py[cod]
+*$py.class
+media/
+staticfiles/
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
