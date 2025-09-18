@@ -1,0 +1,31 @@
+services:
+  fileupload_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # container_name: assignment_one_backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./uploads:/app/uploads
+    env_file:
+      - .env.prod # Environment variables for PostgreSQL (Change )
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    # container_name: postgres_db
+    restart: always
+    env_file: .env.prod # Environment variables for PostgreSQL (Change )
+    environment:
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_DB=assignment_db
+      - POSTGRES_USER=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:

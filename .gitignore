@@ -1,0 +1,12 @@
+# Python
+*.pyc
+*.pyo
+__pycache__/
+venv/
+env/
+.env            
+
+
+.qodo
+
+uploads
